@@ -10,6 +10,8 @@ namespace StreamDeckVS
 {
     public static class DTEAPI
     {
+        private const string VisualStudioDTEMonikerPrefix = "!VisualStudio.DTE.";
+
         public static IEnumerable<EnvDTE.DTE> GetDTE(int? processId = null)
         {
             var dteInstances = new List<DTE>();
@@ -34,7 +36,7 @@ namespace StreamDeckVS
                 {
                     moniker[0].GetDisplayName(bindCtx, null, out var rotName);
 
-                    if (rotName.StartsWith("!VisualStudio.DTE.17.0:") || rotName.StartsWith("!VisualStudio.DTE.16.0:") || rotName.StartsWith("!VisualStudio.DTE.15.0:"))
+                    if (rotName.StartsWith(VisualStudioDTEMonikerPrefix, StringComparison.Ordinal))
                     {
                         Marshal.ThrowExceptionForHR(runningObjects.GetObject(moniker[0], out var runningObject));
 
@@ -42,7 +44,7 @@ namespace StreamDeckVS
                         {
                             Logger.Instance.LogMessage(TracingLevel.INFO, $"ROT Object Found {rotName}");
 
-                            if (processId.HasValue && int.TryParse(rotName.Substring(23), out var rotProcessId) && rotProcessId == processId)
+                            if (processId.HasValue && TryGetProcessId(rotName, out var rotProcessId) && rotProcessId == processId)
                             {
                                 foundByProcessId = true;
 
@@ -81,6 +83,20 @@ namespace StreamDeckVS
                     Marshal.ReleaseComObject(bindCtx);
                 }
             }
+        }
+
+        private static bool TryGetProcessId(string rotName, out int processId)
+        {
+            var processIdSeparator = rotName.LastIndexOf(':');
+
+            if (processIdSeparator < 0 || processIdSeparator == rotName.Length - 1)
+            {
+                processId = 0;
+
+                return false;
+            }
+
+            return int.TryParse(rotName.Substring(processIdSeparator + 1), out processId);
         }
     }
 }
