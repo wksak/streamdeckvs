@@ -10,6 +10,8 @@ namespace StreamDeckVS
 {
     public static class DTEAPI
     {
+        private const string VisualStudioDTEPrefix = "!VisualStudio.DTE.";
+
         public static IEnumerable<EnvDTE.DTE> GetDTE(int? processId = null)
         {
             var dteInstances = new List<DTE>();
@@ -34,7 +36,7 @@ namespace StreamDeckVS
                 {
                     moniker[0].GetDisplayName(bindCtx, null, out var rotName);
 
-                    if (rotName.StartsWith("!VisualStudio.DTE.17.0:") || rotName.StartsWith("!VisualStudio.DTE.16.0:") || rotName.StartsWith("!VisualStudio.DTE.15.0:"))
+                    if (rotName.StartsWith(VisualStudioDTEPrefix, StringComparison.Ordinal))
                     {
                         Marshal.ThrowExceptionForHR(runningObjects.GetObject(moniker[0], out var runningObject));
 
@@ -42,7 +44,9 @@ namespace StreamDeckVS
                         {
                             Logger.Instance.LogMessage(TracingLevel.INFO, $"ROT Object Found {rotName}");
 
-                            if (processId.HasValue && int.TryParse(rotName.Substring(23), out var rotProcessId) && rotProcessId == processId)
+                            var processIdStart = rotName.LastIndexOf(':') + 1;
+
+                            if (processId.HasValue && processIdStart > 0 && int.TryParse(rotName.Substring(processIdStart), out var rotProcessId) && rotProcessId == processId)
                             {
                                 foundByProcessId = true;
 
