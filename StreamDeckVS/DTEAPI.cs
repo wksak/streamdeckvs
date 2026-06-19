@@ -10,7 +10,7 @@ namespace StreamDeckVS
 {
     public static class DTEAPI
     {
-        private const string VisualStudioDTEPrefix = "!VisualStudio.DTE.";
+        private const string VisualStudioDTEMonikerPrefix = "!VisualStudio.DTE.";
 
         public static IEnumerable<EnvDTE.DTE> GetDTE(int? processId = null)
         {
@@ -36,7 +36,7 @@ namespace StreamDeckVS
                 {
                     moniker[0].GetDisplayName(bindCtx, null, out var rotName);
 
-                    if (rotName.StartsWith(VisualStudioDTEPrefix, StringComparison.Ordinal))
+                    if (rotName.StartsWith(VisualStudioDTEMonikerPrefix, StringComparison.Ordinal))
                     {
                         Marshal.ThrowExceptionForHR(runningObjects.GetObject(moniker[0], out var runningObject));
 
