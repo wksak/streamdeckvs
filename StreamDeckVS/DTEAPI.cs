@@ -44,9 +44,9 @@ namespace StreamDeckVS
                         {
                             Logger.Instance.LogMessage(TracingLevel.INFO, $"ROT Object Found {rotName}");
 
-                            var processIdStart = rotName.LastIndexOf(':') + 1;
+                            var processIdSeparator = rotName.LastIndexOf(':');
 
-                            if (processId.HasValue && processIdStart > 0 && int.TryParse(rotName.Substring(processIdStart), out var rotProcessId) && rotProcessId == processId)
+                            if (processId.HasValue && processIdSeparator >= 0 && processIdSeparator < rotName.Length - 1 && int.TryParse(rotName.Substring(processIdSeparator + 1), out var rotProcessId) && rotProcessId == processId)
                             {
                                 foundByProcessId = true;
 
