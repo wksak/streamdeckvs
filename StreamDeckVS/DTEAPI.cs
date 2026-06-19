@@ -44,9 +44,7 @@ namespace StreamDeckVS
                         {
                             Logger.Instance.LogMessage(TracingLevel.INFO, $"ROT Object Found {rotName}");
 
-                            var processIdSeparator = rotName.LastIndexOf(':');
-
-                            if (processId.HasValue && processIdSeparator >= 0 && processIdSeparator < rotName.Length - 1 && int.TryParse(rotName.Substring(processIdSeparator + 1), out var rotProcessId) && rotProcessId == processId)
+                            if (processId.HasValue && TryGetProcessId(rotName, out var rotProcessId) && rotProcessId == processId)
                             {
                                 foundByProcessId = true;
 
@@ -85,6 +83,20 @@ namespace StreamDeckVS
                     Marshal.ReleaseComObject(bindCtx);
                 }
             }
+        }
+
+        private static bool TryGetProcessId(string rotName, out int processId)
+        {
+            var processIdSeparator = rotName.LastIndexOf(':');
+
+            if (processIdSeparator < 0 || processIdSeparator == rotName.Length - 1)
+            {
+                processId = 0;
+
+                return false;
+            }
+
+            return int.TryParse(rotName.Substring(processIdSeparator + 1), out processId);
         }
     }
 }
