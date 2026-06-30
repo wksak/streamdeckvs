@@ -1,6 +1,6 @@
-# Stream Deck for Visual Studio 2017, 2019, 2022 & 2026
+# Stream Deck for Visual Studio
 
-Enables Stream Deck integration with Visual Studio 2017, 2019, 2022 & 2026.
+Enables Stream Deck integration with Visual Studio
 
 ## Features
 
