@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+#if NET5_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
 using BarRaider.SdTools;
 using EnvDTE;
 
 namespace StreamDeckVS
 {
+#if NET5_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+#endif
     public static class DTEAPI
     {
         private const string VisualStudioDTEMonikerPrefix = "!VisualStudio.DTE.";

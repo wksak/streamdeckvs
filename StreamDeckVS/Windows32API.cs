@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+#if NET5_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
 
 namespace StreamDeckVS
 {
+#if NET5_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+#endif
     public static class Windows32API
     {
         [DllImport("user32.dll")]

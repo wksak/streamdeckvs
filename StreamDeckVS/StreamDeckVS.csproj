@@ -2,11 +2,12 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFrameworks>net472;net10.0-windows</TargetFrameworks>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyName>com.nicollasr.streamdeckvs</AssemblyName>
   </PropertyGroup>
-  <ItemGroup>
+  <!-- net472 전용 framework 어셈블리 참조 -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -26,6 +27,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="16.10.31320.204" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="StreamDeck-Tools" Version="3.2.0" />
+  </ItemGroup>
+  <!-- net10.0-windows 전용: System.Management NuGet 패키지 -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
+    <PackageReference Include="System.Management" Version="9.0.6" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Images\ExecuteCommand%402x.png">
@@ -86,7 +91,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <!-- net472 전용: App.config -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <None Update="App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <!-- postbuild 스크립트는 Windows(PowerShell) 환경에서만 실행 -->
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT'">
     <Exec Command="powershell.exe -NonInteractive -ExecutionPolicy Unrestricted -Command &quot;. '$(SolutionDir)postbuild.ps1' -targetName '$(TargetName)' -outputDir '$(ProjectDir)$(OutDir)'&quot;" />
   </Target>
 </Project>

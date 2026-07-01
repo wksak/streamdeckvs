@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
+#if NET5_0_OR_GREATER
+using System.Runtime.Versioning;
+#endif
 using BarRaider.SdTools;
 using EnvDTE;
 
 namespace StreamDeckVS
 {
     [PluginActionId("com.nicollasr.streamdeckvs.executecommand")]
+#if NET5_0_OR_GREATER
+    [SupportedOSPlatform("windows")]
+#endif
     public class ExecuteCommandKey : Key<ExecuteCommandSettings>
     {
         public ExecuteCommandKey(SDConnection connection, InitialPayload payload) : base(connection, payload)
